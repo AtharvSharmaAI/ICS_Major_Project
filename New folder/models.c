@@ -20,6 +20,17 @@ float **initialize_weights_softmax(int cols) {
     }
     return weights;
 }
+float *initialize_weights(int m)
+{
+    float *weights = (float *)malloc(m * sizeof(float *));
+
+    for (int j = 0; j < m; j++)
+    {
+        weights[j] = 0.0;
+    }
+
+    return weights;
+}
 
 // Softmax function to calculate probabilities for each of the 3 classes
 void _softmax(float *logits, float *output, int num_features) {
@@ -82,7 +93,7 @@ float **_softmax_regression_fit(float **data, float *targets, int rows, int cols
 }
 
 // Function to make predictions
-int *predict(char filename[200], float **weights) {
+int *predict_softmax(char filename[200], float **weights) {
     int n = 0, m = 0;
     float **data = load_data(filename, &n, &m);
     if (data == NULL) {
@@ -126,7 +137,7 @@ int *predict(char filename[200], float **weights) {
 }
 
 // Accuracy calculation for multiclass predictions
-float accuracy(int *true_labels, int *pred_labels, int size) {
+float accuracy_softmax(int *true_labels, int *pred_labels, int size) {
     int count = 0;
     for (int i = 0; i < size; i++) {
         if (true_labels[i] == pred_labels[i]) {
@@ -144,26 +155,26 @@ int main() {
     float **train_data = load_data("train_data.txt", &rows, &cols);
     float *train_targets = malloc(rows * sizeof(float));
 
-    float **weights = _softmax_regression_fit(train_data, train_targets, rows, cols, learning_rate, iterations);
+    float **weights_softmax = _softmax_regression_fit(train_data, train_targets, rows, cols, learning_rate, iterations);
 
-    int *predictions = predict("test_data.txt", weights);
+    int *predictions = predict_softmax("test_data.txt", weights_softmax);
 
     float *true_labels = malloc(rows * sizeof(float));
 
-    float acc = accuracy(true_labels, predictions, rows);
+    float acc = accuracy_softmax(true_labels, predictions, rows);
     printf("Accuracy: %.2f%%\n", acc);
 
     free(train_targets);
     free(true_labels);
     for (int i = 0; i < rows; i++) free(train_data[i]);
     free(train_data);
-    for (int i = 0; i < cols; i++) free(weights[i]);
-    free(weights);
+    for (int i = 0; i < cols; i++) free(weights_softmax[i]);
+    free(weights_softmax);
     free(predictions);
 
     return 0;
 }
-//-------------------------------------------SOFTMAX REGRESSION----------------------------------------------------------
+//-------------------------------------------LOGISTIC REGRESSION----------------------------------------------------------
 // sigmoid function
 float sigmoid(float z)
 {
