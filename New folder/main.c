@@ -4,9 +4,10 @@
 #include<math.h>
 #include<stdbool.h>
 #include<unistd.h>
+#include<ctype.h>
 #include"machine_learning.h"
 
-void typewriter_print(char *str, unsigned int milliseconds, int colour_code)
+void typewriter_print(char *str, int colour_code)
 {
   for (; *str != '\0'; str++)
   {
@@ -20,50 +21,94 @@ void typewriter_print(char *str, unsigned int milliseconds, int colour_code)
 
 int main(){
     printf("                      ");
-    typewriter_print("WELCOME TO MACHINE LEARNING IN C\n",60,197);
+    typewriter_print("WELCOME TO MACHINE LEARNING IN C\n",197);
     printf("                                ");
-    typewriter_print("Main Menu\n",70,197);
+    typewriter_print("Main Menu\n",197);
 
     //get the train file
-    typewriter_print("Please enter your training file name: ",60,208);
+    typewriter_print("Please Select your Dataset: \n",208);
     char filename[200];
-    scanf("%s",filename);
+    char test_filename[200];
+    int file;
+    typewriter_print("1. Breast Cancer dataset\n",208);
+    typewriter_print("2. iris flower dataset\n",208);
+    typewriter_print("3. scaled dataset\n",208);
+    typewriter_print("4. TV Marketing dataset\n",208);
+    typewriter_print("5. Exit\n",208);
+    scanf("%d",&file);
+    switch(file) {
+        case 1:
+            strcpy(filename, "Breast_cancer.csv");
+            strcpy(test_filename, "test_breast.csv");
+            break;
+
+        case 2:
+            strcpy(filename, "iris_flower_dataset.csv");
+            strcpy(test_filename, "test_iris.csv");
+            break;
+
+        case 3:
+            strcpy(filename, "scaled_data.csv");
+            strcpy(test_filename, "test_scaled_data.csv");
+            break;
+
+        case 4:
+            strcpy(filename, "tvmarketing.csv");
+            strcpy(test_filename, "test_tvmarketing.csv");
+            break;
+
+        case 5:
+
+        exit(0);
+
+        break;
+
+        default:
+        typewriter_print("wrong number try again",197);
+        return main();
+        break;
+
+    };
+    
     FILE* fptr= fopen(filename,"r");
 
     //check if file can be loaded or not
     if(fptr==NULL){
-        typewriter_print("Train file can't be opened\n",50,197);
+        typewriter_print("Train file can't be opened\n",197);
     }
     fclose(fptr);
 
     // get the test file
-    typewriter_print("Please enter your test file name: ",60,208);
-    char test_filename[200];
-    scanf("%s",test_filename);
+    typewriter_print("Please enter your test file name: ",208);
+    
+    //scanf("%s",test_filename);
     FILE* fptr_= fopen(filename,"r");
     if(fptr_==NULL){
-        typewriter_print("Test file can't be opened\n",50,197);
+        typewriter_print("Test file can't be opened\n",197);
     }
     fclose(fptr_);
 
     //giving the options to user for model selection and for scaling the data
-    typewriter_print("\nPlease select the model to use:\n",60,208);
-    typewriter_print("1. Data Scaling\n",60,208);
-    typewriter_print("2. Linear Regression\n",60,208);
-    typewriter_print("3. Logistic Regression\n",60,208);
-    typewriter_print("4. K Nearest Neighbour\n",60,208);
-    typewriter_print("5. Exit\n",60,208);
-    typewriter_print("Enter option: ",60,208);
+    typewriter_print("\nPlease select the model to use:\n",208);
+    typewriter_print("1. Data Scaling\n",208);
+    typewriter_print("2. Linear Regression\n",208);
+    typewriter_print("3. Logistic Regression\n",208);
+    typewriter_print("4. K Nearest Neighbour\n",208);
+    typewriter_print("5. Softmax Regression\n",208);
+    typewriter_print("6. Exit\n",208);
+    typewriter_print("7. Restart\n",208);
+
+    typewriter_print("Enter option: ",208);
     int option;
     scanf("%d",&option);
     int choice=0;
     switch (option)
     {
     case 1:
-        typewriter_print("Choose scaler type:\n",60,208);
-        typewriter_print("1. Min Max Scaler\n",60,208);
-        typewriter_print("2. Standard Scaler\n",60,208);
-        typewriter_print("3. Main Menu\n",60,208);
+        typewriter_print("Choose scaler type:\n",208);
+        typewriter_print("1. Min Max Scaler\n",208);
+        typewriter_print("2. Standard Scaler\n",208);
+        typewriter_print("3. Main Menu\n",208);
         do{
             scanf("%d",&choice);
             switch (choice)
@@ -102,9 +147,13 @@ int main(){
         break;
     case 6:
         exit(0);
+        break;
+    case 7:
+        main();
+        break;
 
     default:
-        typewriter_print("Invalid option",60,196);
+        typewriter_print("Invalid option",196);
         main();
         break;
     }
