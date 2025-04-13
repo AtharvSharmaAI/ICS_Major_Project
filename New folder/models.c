@@ -20,31 +20,35 @@ float **initialize_weights_softmax(int cols) {
     }
     return weights;
 }
-float *initialize_weights(int m)
-{
+
+float *initialize_weights(int m) {
     float *weights = (float *)malloc(m * sizeof(float *));
 
-    for (int j = 0; j < m; j++)
-    {
+    for (int j = 0; j < m; j++) {
         weights[j] = 0.0;
     }
 
     return weights;
 }
 
-// Softmax function to calculate probabilities for each of the 3 classes
-void _softmax(float *logits, float *output, int num_features) {
+// Modified Softmax function to calculate probabilities for each of the 3 classes
+void _softmax(float *logits, float *output) {
     float max_logit = logits[0];
+    
+    // Find maximum logit for numerical stability
     for (int i = 1; i < NUM_CLASSES; i++) {
         if (logits[i] > max_logit) max_logit = logits[i];
     }
 
     float sum_exp = 0.0f;
+
+    // Calculate normalized exponentials
     for (int i = 0; i < NUM_CLASSES; i++) {
-        output[i] = exp(logits[i] - max_logit);
+        output[i] = expf(logits[i] - max_logit); // Use expf for float precision
         sum_exp += output[i];
     }
 
+    // Normalize probabilities
     for (int i = 0; i < NUM_CLASSES; i++) {
         output[i] /= sum_exp;
     }
@@ -70,7 +74,7 @@ float **_softmax_regression_fit(float **data, float *targets, int rows, int cols
             }
 
             float probs[NUM_CLASSES];
-            _softmax(logits, probs, cols);
+            _softmax(logits, probs);
 
             for (int c = 0; c < NUM_CLASSES; c++) {
                 float error = ((int)targets[i] == c ? 1.0f : 0.0f) - probs[c];
@@ -117,7 +121,7 @@ int *predict_softmax(char filename[200], float **weights) {
         }
 
         float probs[NUM_CLASSES];
-        _softmax(logits, probs, m);
+        _softmax(logits, probs);
 
         int predicted_class = 0;
         float max_prob = probs[0];
@@ -146,34 +150,77 @@ float accuracy_softmax(int *true_labels, int *pred_labels, int size) {
     }
     return (count * 100.0f) / size;
 }
-
-int main() {
+void softmax_regression(char filename[200], char test_filename[200]) {
     int rows = 0, cols = 0;
+    float **data = load_data(filename, &rows, &cols);
+
+    printf("Shape of the data is: %d %d \n", rows, cols);
+    float *targets = get_targets(filename);
+
+    // Convert float targets to int for softmax handling
+    int *int_targets = malloc(rows * sizeof(int));
+    for(int i = 0; i < rows; i++) {
+        int_targets[i] = (int)targets[i];
+    }
+
+    // Training parameters
     float learning_rate = 0.01f;
     int iterations = 1000;
 
-    float **train_data = load_data("train_data.txt", &rows, &cols);
-    float *train_targets = malloc(rows * sizeof(float));
+    // Train model
+    float **weights = _softmax_regression_fit(data, targets, rows, cols, learning_rate, iterations);
+    
+    // Print sample weights
+    printf("First 5 weights per class:\n");
+    for(int c = 0; c < NUM_CLASSES; c++) {
+        printf("Class %d: ", c);
+        for(int j = 0; j < 5 && j < cols; j++) {
+            printf("%.3f ", weights[j][c]);
+        }
+        printf("\n");
+    }
 
-    float **weights_softmax = _softmax_regression_fit(train_data, train_targets, rows, cols, learning_rate, iterations);
+    // Get predictions
+    int *predictions = predict_softmax(test_filename, weights);
 
-    int *predictions = predict_softmax("test_data.txt", weights_softmax);
+    // Get test targets
+    int test_rows = 0, test_cols = 0;
+    calculate_csv_shape(test_filename, &test_rows, &test_cols);
+    float *test_targets = get_targets(test_filename);
+    int *int_test_targets = malloc(test_rows * sizeof(int));
+    for(int i = 0; i < test_rows; i++) {
+        int_test_targets[i] = (int)test_targets[i];
+    }
 
-    float *true_labels = malloc(rows * sizeof(float));
+    // Calculate accuracy
+    float acc = accuracy_softmax(int_test_targets, predictions, test_rows);
+    printf("\nAccuracy score: %.2f%%\n", acc);
 
-    float acc = accuracy_softmax(true_labels, predictions, rows);
-    printf("Accuracy: %.2f%%\n", acc);
+    // Prediction print option
+    char choice = 'y';
+    printf("\nPrint predicted values? (y/n)\n");
+    getchar();
+    scanf("%c", &choice);
+    if(choice == 'y' || choice == 'Y') {
+        for(int i = 0; i < test_rows; i++) {
+            printf("%d\t", predictions[i]);
+        }
+    }
 
-    free(train_targets);
-    free(true_labels);
-    for (int i = 0; i < rows; i++) free(train_data[i]);
-    free(train_data);
-    for (int i = 0; i < cols; i++) free(weights_softmax[i]);
-    free(weights_softmax);
+    // Cleanup
+    free(targets);
+    free(int_targets);
+    free(test_targets);
+    free(int_test_targets);
+    for(int i = 0; i < rows; i++) free(data[i]);
+    free(data);
+    for(int i = 0; i < cols; i++) free(weights[i]);
+    free(weights);
     free(predictions);
-
-    return 0;
+    
+    printf("\nThank You!");
 }
+
 //-------------------------------------------LOGISTIC REGRESSION----------------------------------------------------------
 // sigmoid function
 float sigmoid(float z)
