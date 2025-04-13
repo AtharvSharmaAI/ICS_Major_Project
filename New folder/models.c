@@ -5,21 +5,165 @@
 #include <stdbool.h>
 #include "model_functions.c"
 
-//-------------------------------------------LOGISTIC REGRESSION----------------------------------------------------------
+//-------------------------------------------SOFTMAX REGRESSION----------------------------------------------------------
 
-// Function to initialize weights matrix with zeros
-float *initialize_weights(int m)
-{
-    float *weights = (float *)malloc(m * sizeof(float *));
+#define NUM_CLASSES 3
 
-    for (int j = 0; j < m; j++)
-    {
-        weights[j] = 0.0;
+// Initialize weights with small random values (features x 3 classes)
+float **initialize_weights_softmax(int cols) {
+    float **weights = (float **)malloc(cols * sizeof(float *));
+    for (int i = 0; i < cols; i++) {
+        weights[i] = (float *)malloc(NUM_CLASSES * sizeof(float));
+        for (int j = 0; j < NUM_CLASSES; j++) {
+            weights[i][j] = ((float)rand() / RAND_MAX - 0.5f) * 0.01f;
+        }
+    }
+    return weights;
+}
+
+// Softmax function to calculate probabilities for each of the 3 classes
+void _softmax(float *logits, float *output, int num_features) {
+    float max_logit = logits[0];
+    for (int i = 1; i < NUM_CLASSES; i++) {
+        if (logits[i] > max_logit) max_logit = logits[i];
+    }
+
+    float sum_exp = 0.0f;
+    for (int i = 0; i < NUM_CLASSES; i++) {
+        output[i] = exp(logits[i] - max_logit);
+        sum_exp += output[i];
+    }
+
+    for (int i = 0; i < NUM_CLASSES; i++) {
+        output[i] /= sum_exp;
+    }
+}
+
+// Softmax regression training using gradient descent
+float **_softmax_regression_fit(float **data, float *targets, int rows, int cols, float learning_rate, int iterations) {
+    float **weights = initialize_weights_softmax(cols);
+
+    for (int iter = 0; iter < iterations; iter++) {
+        float **gradients = (float **)calloc(cols, sizeof(float *));
+        for (int j = 0; j < cols; j++) {
+            gradients[j] = (float *)calloc(NUM_CLASSES, sizeof(float));
+        }
+
+        for (int i = 0; i < rows; i++) {
+            float logits[NUM_CLASSES];
+            for (int c = 0; c < NUM_CLASSES; c++) {
+                logits[c] = 0.0f;
+                for (int j = 0; j < cols; j++) {
+                    logits[c] += data[i][j] * weights[j][c];
+                }
+            }
+
+            float probs[NUM_CLASSES];
+            _softmax(logits, probs, cols);
+
+            for (int c = 0; c < NUM_CLASSES; c++) {
+                float error = ((int)targets[i] == c ? 1.0f : 0.0f) - probs[c];
+                for (int j = 0; j < cols; j++) {
+                    gradients[j][c] += error * data[i][j];
+                }
+            }
+        }
+
+        for (int j = 0; j < cols; j++) {
+            for (int c = 0; c < NUM_CLASSES; c++) {
+                weights[j][c] += (learning_rate * gradients[j][c]) / rows;
+            }
+            free(gradients[j]);
+        }
+        free(gradients);
     }
 
     return weights;
 }
 
+// Function to make predictions
+int *predict(char filename[200], float **weights) {
+    int n = 0, m = 0;
+    float **data = load_data(filename, &n, &m);
+    if (data == NULL) {
+        printf("Error loading data from file '%s'.\n", filename);
+        return NULL;
+    }
+
+    int *predictions = malloc(n * sizeof(int));
+    if (predictions == NULL) {
+        printf("Memory allocation failed for predictions.\n");
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        float logits[NUM_CLASSES];
+        for (int c = 0; c < NUM_CLASSES; c++) {
+            logits[c] = 0.0f;
+            for (int j = 0; j < m; j++) {
+                logits[c] += data[i][j] * weights[j][c];
+            }
+        }
+
+        float probs[NUM_CLASSES];
+        _softmax(logits, probs, m);
+
+        int predicted_class = 0;
+        float max_prob = probs[0];
+        for (int c = 1; c < NUM_CLASSES; c++) {
+            if (probs[c] > max_prob) {
+                max_prob = probs[c];
+                predicted_class = c;
+            }
+        }
+        predictions[i] = predicted_class;
+    }
+
+    for (int i = 0; i < n; i++) free(data[i]);
+    free(data);
+
+    return predictions;
+}
+
+// Accuracy calculation for multiclass predictions
+float accuracy(int *true_labels, int *pred_labels, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (true_labels[i] == pred_labels[i]) {
+            count++;
+        }
+    }
+    return (count * 100.0f) / size;
+}
+
+int main() {
+    int rows = 0, cols = 0;
+    float learning_rate = 0.01f;
+    int iterations = 1000;
+
+    float **train_data = load_data("train_data.txt", &rows, &cols);
+    float *train_targets = malloc(rows * sizeof(float));
+
+    float **weights = _softmax_regression_fit(train_data, train_targets, rows, cols, learning_rate, iterations);
+
+    int *predictions = predict("test_data.txt", weights);
+
+    float *true_labels = malloc(rows * sizeof(float));
+
+    float acc = accuracy(true_labels, predictions, rows);
+    printf("Accuracy: %.2f%%\n", acc);
+
+    free(train_targets);
+    free(true_labels);
+    for (int i = 0; i < rows; i++) free(train_data[i]);
+    free(train_data);
+    for (int i = 0; i < cols; i++) free(weights[i]);
+    free(weights);
+    free(predictions);
+
+    return 0;
+}
+//-------------------------------------------SOFTMAX REGRESSION----------------------------------------------------------
 // sigmoid function
 float sigmoid(float z)
 {
@@ -70,7 +214,6 @@ float *logistic_regression_fit(float **data, float *targets, int rows, int cols,
 
     return weights;
 }
-
 // predictions for test data
 float *predict(char filename[200], float *weights)
 {
@@ -308,7 +451,8 @@ void linear_regression_predict(char filename[200], float s, float c)
         printf("1. Mean Squared Error\n");
         printf("2. Root Mean Squared Error\n");
         printf("3. Mean Absolute Error\n");
-        printf("4. No error\n");
+        printf("4. Cross Entropy Loss Error\n");
+        printf("5. No error\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
         switch (choice)
@@ -323,12 +467,15 @@ void linear_regression_predict(char filename[200], float s, float c)
             mean_absolute_error(filename, predictions, n);
             break;
         case (4):
+            //add cross entropy loss here
+            break;
+        case (5):
             break;
         default:
             printf("Invalid option\n");
             break;
         }
-    } while ((choice < 1) || (choice > 4));
+    } while ((choice < 1) || (choice > 5));
 }
 
 //called function
