@@ -34,7 +34,7 @@ int main(){
     typewriter_print("1. Breast Cancer DataSet\n",60,208);
     typewriter_print("2. Iris Dataset\n",60,208);
     typewriter_print("3. Scaled Data\n",60,208);
-    typewriter_print("3. Tvmarketing Dataset\n",60,208);
+    typewriter_print("4. Tvmarketing Dataset\n",60,208);
     scanf("%d",file);
     switch(file){
         case 1:
