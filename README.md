@@ -22,14 +22,14 @@ With the rising popularity of machine learning, we wanted to explore how core ML
 
 We have implemented the following basic ML algorithms:
 
+- **Data Scaling**
 - **Linear Regression**  
 - **Logistic Regression**
 - **K-Nearest Neighbors (KNN)**
-- **K-Means Clustering**
-- **Naive Bayes Classifier**
+- **Softmax Regression**
 
 All algorithms are written from scratch without using external ML libraries.
 
 ## Project Structure
-<!-- We give project structure here and give contributions -->
+
 
