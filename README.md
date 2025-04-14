@@ -96,16 +96,24 @@ to use gnuplot in your code replace the location of gnuplot in model_functions.c
    ```
 2. Select your desired operation along with dataset.
 
-**Contributions**
+## Contributions
 
 **Atharv Sharma**
 Integrated all the function in main file and made the command prompt user friendly along with writing the function of KNN
+
+
 **Jainam Shah**
 Made the function for Softmax Regression and GNUPLOT integration for graphical view
+
+
 **Bhavyansh Sharma**
 Made the function for Logistic Regression
+
+
 **Dhairya Joshi**
 Made the function for Linear Regression
+
+
 **Utkarsh Bansal**
 Made the function for Data Scaling 
 
