@@ -48,7 +48,7 @@ to use gnuplot in your code replace the location of gnuplot in model_functions.c
 
 2. Navigate to the project directory:
 ```
-   cd ICS_Major_Project
+   cd New folder
 ```
 
 
