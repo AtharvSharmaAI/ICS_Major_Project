@@ -5,7 +5,7 @@
 ## Overview
 
 
-This project implements several machine learning models in C, including Data Scaling, Linear Regression, Logistic Regression, and K Nearest Neighbour. It provides a command-line interface for users to choose a model and perform tasks such as training and testing using their own data files.
+This project implements several machine learning models in C, including Data Scaling, Linear Regression, Logistic Regression, K Nearest Neighbour and Softmax Regression. It provides a command-line interface for users to choose a model and perform tasks such as training and testing using their own data files.
 
 
 ## Installation
@@ -42,7 +42,7 @@ to use gnuplot in your code replace the location of gnuplot in model_functions.c
 
 1. Clone the repository:
 
-   https://github.com/Luv-valecha/ICS_Major_Project.git
+   https://github.com/AtharvSharmaAI/ICS_Major_Project.git
 
 
 
@@ -81,6 +81,7 @@ to use gnuplot in your code replace the location of gnuplot in model_functions.c
    - Linear Regression
    - Logistic Regression
    - K Nearest Neighbour
+   - Softmax Regression
    - Exit
 
 
@@ -106,9 +107,10 @@ to use gnuplot in your code replace the location of gnuplot in model_functions.c
 
 
 
-## contributions
+## Contributions
 
-- **Luv Valecha(b23cm1022)**
-- **Dhruv Sharma(b23ci1016)**
-- **Dheeraj Kumar(b23cs1016)**
-- **Adithya Subhash(b23mt1004)**
+- **Atharv Sharma(B24CM1013)**
+- **Jainam Shah (B24CS1071)**
+- **Utkarsh Bansal(B24CI1054)**
+- **Dhairya Joshi(B24ME1024)**
+- **Bhavyansh Sharma(B24CI1006)**
