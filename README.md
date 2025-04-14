@@ -31,5 +31,81 @@ We have implemented the following basic ML algorithms:
 All algorithms are written from scratch without using external ML libraries.
 
 ## Project Structure
-<!-- We give project structure here and give contributions -->
+## Installation
+
+
+1.)GNUPLOT INSTALLATION
+* For Ubuntu 
+```
+sudo apt-get update
+sudo apt install gnuplot
+```
+
+
+*  For MacOs
+```
+brew install gnuplot
+```
+
+
+* For Windows
+ You can download the installer from the official Gnuplot website: https://sourceforge.net/projects/gnuplot/files/gnuplot/
+
+to use gnuplot in your code replace the location of gnuplot in model_functions.c line 130 with the loaction where gnuplot in installed locally.
+
+         
+
+
+
+
+
+
+2.) CODE INSTALLATION                 
+
+
+1. Clone the repository:
+
+   https://github.com/AtharvSharmaAI/ICS_Major_Project.git
+
+
+
+2. Navigate to the project directory:
+```
+   cd ICS_Major_Project
+```
+
+
+3. Compile the project
+```
+   gcc -o main main.c -lm
+```
+
+
+
+
+
+
+
+
+## Usage
+
+
+1. Run the compiled executable:
+   ```
+   ./main
+   ```
+2. Select your desired operation along with dataset.
+
+**Contributions**
+
+**Atharv Sharma**
+Integrated all the function in main file and made the command prompt user friendly along with writing the function of KNN
+**Jainam Shah**
+Made the function for Softmax Regression and GNUPLOT integration for graphical view
+**Bhavyansh Sharma**
+Made the function for Logistic Regression
+**Dhairya Joshi**
+Made the function for Linear Regression
+**Utkarsh Bansal**
+Made the function for Data Scaling 
 
