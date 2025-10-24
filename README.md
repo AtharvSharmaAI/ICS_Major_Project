@@ -10,9 +10,6 @@ This project demonstrates the implementation of fundamental Machine Learning (ML
 
 - Atharv Sharma  (B24CM1013)
 - Jainam Shah  (B24CS1071)  
-- Utkarsh Bansal (B24CI1054)
-- Dhairya Joshi  (B24ME1024)
-- Bhavyansh Sharma (B24CI1006)
 
 ## Motivation
 
